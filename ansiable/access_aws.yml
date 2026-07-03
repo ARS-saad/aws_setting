@@ -1,0 +1,20 @@
+---
+- name: Configure AWS Credentials on Managed Nodes
+  hosts: build-server
+  vars_files:
+    - vault.yml
+  tasks:
+    - name: Ensure .aws directory exists
+      ansible.builtin.file:
+        path: "~/.aws"
+        state: directory
+        mode: "0700"
+
+    - name: Deploy AWS credentials file
+      ansible.builtin.copy:
+        dest: "~/.aws/credentials"
+        mode: "0600"
+        content: |
+          [default]
+          aws_access_key_id = {{ vault_aws_access_key }}
+          aws_secret_access_key = {{ vault_aws_secret_key }}

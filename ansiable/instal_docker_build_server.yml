@@ -1,0 +1,35 @@
+---
+- hosts: build-server
+  become: true
+  tasks:
+    - name:
+      apt:
+        update_cache: yes
+        #cache_valid_time: 3600
+        
+    - name: install default java
+      apt:
+        name: default-jre
+        state: present
+        update_cache: yes
+
+    - name: install docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: start docker server
+      service:
+        name: docker
+        state: started
+
+    - name: given 777 permissions on /var/run/docker.sock
+      file:
+        path: /var/run/docker.sock
+        state: file
+        mode: 0777
+
+    - name: start docker on boot time
+      service:
+        name: docker
+        enabled: yes
